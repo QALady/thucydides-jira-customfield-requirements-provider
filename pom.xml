@@ -8,7 +8,7 @@
     </parent>
     <groupId>net.thucydides.plugins.jira</groupId>
     <artifactId>thucydides-jira-customfields-requirements-provider</artifactId>
-    <version>0.9.220</version>
+    <version>0.9.220-SNAPSHOT</version>
     <name>thucydides-jira-requirements-provider</name>
     <packaging>jar</packaging>
 
@@ -21,9 +21,9 @@
     </properties>
 
     <scm>
-        <connection>scm:git:git@github.com:thucydides-webtests/thucydides-jira-requirements-provider.git</connection>
-        <developerConnection>scm:git:git@github.com:thucydides-webtests/thucydides-jira-requirements-provider.git</developerConnection>
-        <url>scm:git:git@github.com:thucydides-webtests/thucydides-jira-requirements-provider.git</url>
+        <connection>scm:git:git@github.com:thucydides-webtests/thucydides-jira-customfields-requirements-provider.git</connection>
+        <developerConnection>scm:git:git@github.com:thucydides-webtests/thucydides-jira-customfields-requirements-provider.git</developerConnection>
+        <url>scm:git:git@github.com:thucydides-webtests/thucydides-jira-customfields-requirements-provider.git</url>
     </scm>
 
 
