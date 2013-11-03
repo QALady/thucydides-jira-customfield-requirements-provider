@@ -21,9 +21,9 @@
     </properties>
 
     <scm>
-        <connection>scm:git:git@github.com:thucydides-webtests/thucydides-jira-customfields-requirements-provider.git</connection>
-        <developerConnection>scm:git:git@github.com:thucydides-webtests/thucydides-jira-customfields-requirements-provider.git</developerConnection>
-        <url>scm:git:git@github.com:thucydides-webtests/thucydides-jira-customfields-requirements-provider.git</url>
+        <connection>scm:git:git@github.com:thucydides-webtests/thucydides-jira-customfield-requirements-provider.git</connection>
+        <developerConnection>scm:git:git@github.com:thucydides-webtests/thucydides-jira-customfield-requirements-provider.git</developerConnection>
+        <url>scm:git:git@github.com:thucydides-webtests/thucydides-jira-customfield-requirements-provider.git</url>
     </scm>
 
 
