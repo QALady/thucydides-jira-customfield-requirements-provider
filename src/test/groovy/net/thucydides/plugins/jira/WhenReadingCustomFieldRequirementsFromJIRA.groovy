@@ -56,6 +56,26 @@ class WhenReadingCustomFieldRequirementsFromJIRA extends Specification {
             requirement.get().type == "feature"
     }
 
+    def "should get corresponding requirement set from a test outcome "() {
+        given:
+            TestOutcome outcome = Mock(TestOutcome)
+            outcome.issueKeys >> ["DEMO-8"]
+        when:
+            List<Requirement> requirements = requirementsProvider.getAssociatedRequirements(outcome)
+        then:
+            requirements.collect { it.name }.containsAll(["Grow normal potatoes", "Grow Potatoes"])
+    }
+
+    def "associated tags should include all requirements"() {
+        given:
+            TestOutcome outcome = Mock(TestOutcome)
+            outcome.issueKeys >> ["DEMO-8"]
+        when:
+            def tags = requirementsProvider.getTagsFor(outcome)
+        then:
+            tags.collect { it.name }.containsAll(["Grow normal potatoes", "Grow Potatoes"])
+    }
+
     def "should get corresponding requirements from a test tag "() {
         given:
             TestTag tag = TestTag.withName("Grow Potatoes").andType("capability")

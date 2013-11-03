@@ -1,1 +1,1 @@
-net.thucydides.plugins.jira.requirements.JIRARequirementsProvider
+net.thucydides.plugins.jira.requirements.JIRACustomFieldsRequirementsProvider

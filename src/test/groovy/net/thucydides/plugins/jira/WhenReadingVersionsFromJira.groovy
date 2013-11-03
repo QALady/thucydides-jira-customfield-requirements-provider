@@ -2,10 +2,8 @@ package net.thucydides.plugins.jira
 
 import net.thucydides.core.model.TestOutcome
 import net.thucydides.core.model.TestTag
-import net.thucydides.core.requirements.model.Requirement
 import net.thucydides.core.util.MockEnvironmentVariables
 import net.thucydides.plugins.jira.requirements.JIRACustomFieldsRequirementsProvider
-import net.thucydides.plugins.jira.requirements.JIRARequirementsProvider
 import net.thucydides.plugins.jira.service.JIRAConfiguration
 import net.thucydides.plugins.jira.service.SystemPropertiesJIRAConfiguration
 import spock.lang.Specification
@@ -15,7 +13,7 @@ class WhenReadingVersionsFromJira extends Specification {
 
     JIRAConfiguration configuration
     def environmentVariables = new MockEnvironmentVariables()
-    def requirementsProvider
+    JIRACustomFieldsRequirementsProvider requirementsProvider
 
     def setup() {
         environmentVariables.setProperty('jira.url','https://wakaleo.atlassian.net')
@@ -27,18 +25,30 @@ class WhenReadingVersionsFromJira extends Specification {
         requirementsProvider = new JIRACustomFieldsRequirementsProvider(configuration, environmentVariables)
     }
 
-    def "should find version details for a given issue"() {
+    def "should find the release structure using a custom field"() {
         given:
+            environmentVariables.setProperty("thucydides.use.customfield.releases","true")
+            def requirementsProvider = new JIRACustomFieldsRequirementsProvider(configuration, environmentVariables)
+        when:
+            def releases = requirementsProvider.getReleases()
+        then:
+            releases.collect {it.name} == ["Release 1","Release 2","Release 3","Release 4"]
+        and:
+            releases[0].children.collect {it.name} == ["Sprint 1", "Sprint 2"]
+    }
+
+    def "should find the release for a given issue"() {
+        given:
+            environmentVariables.setProperty("thucydides.use.customfield.releases","true")
+            def requirementsProvider = new JIRACustomFieldsRequirementsProvider(configuration, environmentVariables)
+        and:
             def testOutcome = Mock(TestOutcome)
             testOutcome.getIssueKeys() >> ["DEMO-2"]
         when:
-            def tags = requirementsProvider.getTagsFor(testOutcome)
+            def tags = requirementsProvider.getTagsFor(testOutcome);
         then:
-            tags.size() == 3
-        and:
-            tags.contains(TestTag.withName("Iteration 1.1").andType("Version"))
-        and:
-            tags.contains(TestTag.withName("Version 1.0").andType("Version"))
+            tags.collect {it.name }.containsAll(["Release 1","Sprint 2"])
+
     }
 
 }
