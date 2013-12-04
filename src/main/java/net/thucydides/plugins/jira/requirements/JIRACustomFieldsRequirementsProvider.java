@@ -62,7 +62,7 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
 
     public final static String DEFAULT_ISSUETYPE = "Bug";
 
-    public final static String CUSTOM_FIELD_PROPERTY = "thucydides.requirements.custom.field";
+    public final static String CUSTOM_FIELD_PROPERTY = " ";
     public final static String DEFAULT_CUSTOM_FIELD = "Requirements";
 
     public final static String ISSUETYPE_PROPERTY = "thucydides.requirements.issue.type";
@@ -115,11 +115,7 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
     public List<Requirement> getRequirements() {
         if (requirements == null) {
             List<CascadingSelectOption> requirementsOptions = Lists.newArrayList();
-            try {
-                requirementsOptions = jiraClient.findOptionsForCascadingSelect(requirementsField);
-            } catch (JSONException e) {
-                logger.warn("No root requirements found", e);
-            }
+            requirementsOptions = jiraClient.findOptionsForCascadingSelect(requirementsField);
             requirements = convertToRequirements(requirementsOptions);
         }
         return requirements;
@@ -131,11 +127,7 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
         logger.info("Loading releases from JIRA custom fields");
         if (releases == null) {
             List<CascadingSelectOption> releaseOptions = Lists.newArrayList();
-            try {
-                releaseOptions = jiraClient.findOptionsForCascadingSelect(releaseField);
-            } catch (JSONException e) {
-                logger.warn("No releases found", e);
-            }
+            releaseOptions = jiraClient.findOptionsForCascadingSelect(releaseField);
             releases = new ReleaseConverter().convertToReleases(releaseOptions);
         }
         logger.info("Releases: " + releases);
