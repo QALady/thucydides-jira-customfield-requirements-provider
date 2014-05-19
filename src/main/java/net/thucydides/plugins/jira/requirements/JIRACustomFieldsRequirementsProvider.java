@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static ch.lambdaj.Lambda.convert;
-import static net.thucydides.core.ThucydidesSystemProperty.REQUIREMENT_TYPES;
+import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_REQUIREMENT_TYPES;
 
 
 /**
@@ -91,7 +91,7 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
         requirementsField = environmentVariables.getProperty(CUSTOM_FIELD_PROPERTY, DEFAULT_CUSTOM_FIELD);
         releaseField = environmentVariables.getProperty(CUSTOMFIELD_RELEASES_PROPERTY, DEFAULT_RELEASE_FIELD);
         requirementTypes = Splitter.on(",").trimResults().splitToList(
-                                REQUIREMENT_TYPES.from(environmentVariables, DEFAULT_REQUIREMENTS_TYPES));
+                THUCYDIDES_REQUIREMENT_TYPES.from(environmentVariables, DEFAULT_REQUIREMENTS_TYPES));
 
         List<String> customFields = Lists.newArrayList(requirementsField);
         if (releaseProviderActive) {
@@ -178,7 +178,7 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
         for(CascadingSelectOption option : requirementsOptions) {
             requirements.add(Requirement.named(option.getOption())
                     .withType(requirementType(requirementLevel))
-                    .withNarrativeText(option.getOption())
+                    .withNarrative(option.getOption())
                     .withChildren(convertToRequirements(option.getNestedOptions(), requirementLevel + 1)));
 
         }
@@ -246,7 +246,7 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
             String optionValue = fieldValueList.get(level);
             matchingRequirements.add(Requirement.named(optionValue)
                                                 .withType(requirementType(level))
-                                                .withNarrativeText(optionValue));
+                                                .withNarrative(optionValue));
         }
         return matchingRequirements;
     }
