@@ -114,8 +114,7 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
     @Override
     public List<Requirement> getRequirements() {
         if (requirements == null) {
-            List<CascadingSelectOption> requirementsOptions = Lists.newArrayList();
-            requirementsOptions = jiraClient.findOptionsForCascadingSelect(requirementsField);
+            List<CascadingSelectOption> requirementsOptions = jiraClient.findOptionsForCascadingSelect(requirementsField);
             requirements = convertToRequirements(requirementsOptions);
         }
         return requirements;
@@ -169,17 +168,23 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
     }
 
     private List<Requirement> convertToRequirements(List<CascadingSelectOption> requirementsOptions) {
-        return convertToRequirements(requirementsOptions, 0);
+        return convertToRequirements(requirementsOptions, 0, "");
     }
 
-    private List<Requirement> convertToRequirements(List<CascadingSelectOption> requirementsOptions, int requirementLevel) {
+    private List<Requirement> convertToRequirements(List<CascadingSelectOption> requirementsOptions,
+                                                    int requirementLevel,
+                                                    String parentRequirement) {
         List<Requirement> requirements = Lists.newArrayList();
 
         for(CascadingSelectOption option : requirementsOptions) {
-            requirements.add(Requirement.named(option.getOption())
+            Requirement newRequirement = Requirement.named(option.getOption())
                     .withType(requirementType(requirementLevel))
                     .withNarrative(option.getOption())
-                    .withChildren(convertToRequirements(option.getNestedOptions(), requirementLevel + 1)));
+                    .withChildren(convertToRequirements(option.getNestedOptions(), requirementLevel + 1, option.getOption()));
+            if (requirementLevel > 0) {
+                newRequirement = newRequirement.withParent(parentRequirement);
+            }
+            requirements.add(newRequirement);
 
         }
         return requirements;
@@ -242,11 +247,13 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
 
     private List<Requirement> requirementsCalled(List<String> fieldValueList) {
         List<Requirement> matchingRequirements = Lists.newArrayList();
+        String parentRequirement = null;
         for(int level = 0; level < fieldValueList.size(); level++) {
             String optionValue = fieldValueList.get(level);
             matchingRequirements.add(Requirement.named(optionValue)
                                                 .withType(requirementType(level))
-                                                .withNarrative(optionValue));
+                                                .withNarrative(optionValue).withParent(parentRequirement));
+            parentRequirement = optionValue;
         }
         return matchingRequirements;
     }
@@ -258,7 +265,7 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
     @Override
     public Optional<Requirement> getRequirementFor(TestTag testTag) {
         for (Requirement requirement : getFlattenedRequirements()) {
-            if (requirement.getType().equals(testTag.getType()) && requirement.getName().equals(testTag.getName())) {
+            if (requirement.getType().equals(testTag.getType()) && requirement.getName().equals(testTag.getShortName())) {
                 return Optional.of(requirement);
             }
         }
@@ -289,7 +296,7 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
             matchingTags.addAll(getCustomVersionTags(issue.get()));
             matchingTags.add(TestTag.withName(issue.get().getSummary()).andType(issue.get().getType()));
             if (releaseProviderActive) {
-               matchingTags.addAll(getCustomVersionTags(issue.get()));
+                matchingTags.addAll(getCustomVersionTags(issue.get()));
             } else {
                 matchingTags.addAll(versionTagsFrom(issue.get().getFixVersions()));
             }
@@ -337,7 +344,7 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
         return new Converter<Requirement, TestTag>() {
             @Override
             public TestTag convert(Requirement from) {
-                return TestTag.withName(from.getName()).andType(from.getType());
+                return from.asTag();
             }
         };
     }

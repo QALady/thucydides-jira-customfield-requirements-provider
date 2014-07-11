@@ -33,9 +33,9 @@ class WhenReadingCustomFieldRequirementsFromJIRA extends Specification {
         when:
             List<Requirement> requirements = requirementsProvider.getRequirements()
         then:
-            requirements.collect { it.name } == ["Grow Apples","Grow Potatoes","Raise Chickens","Raise Sheep"]
+            requirements.collect { it.name }.contains("Grow Apples")
         and:
-            requirements.collect { it.type } == ["capability", "capability", "capability", "capability"]
+            requirements.collect { it.type } as Set == ["capability"] as Set
         and:
             requirements[0].children.collect { it.name } == ["Grow red apples","Grow green apples"]
         and:
@@ -56,14 +56,36 @@ class WhenReadingCustomFieldRequirementsFromJIRA extends Specification {
             requirement.get().type == "feature"
     }
 
-    def "should get corresponding requirement set from a test outcome "() {
+    def "should get corresponding requirement from a test outcome"() {
         given:
             TestOutcome outcome = Mock(TestOutcome)
-            outcome.issueKeys >> ["DEMO-8"]
+            outcome.issueKeys >> ["FH-11"]
         when:
-            List<Requirement> requirements = requirementsProvider.getAssociatedRequirements(outcome)
+            def requirement = requirementsProvider.getParentRequirementOf(outcome)
         then:
-            requirements.collect { it.name }.containsAll(["Grow normal potatoes", "Grow Potatoes"])
+            requirement.isPresent();
+            requirement.get().name == "Points from special offers"
+    }
+
+    def "should get corresponding requirement tags from a test outcome"() {
+        given:
+        TestOutcome outcome = Mock(TestOutcome)
+        outcome.issueKeys >> ["FH-11"]
+        when:
+        def tags = requirementsProvider.getTagsFor(outcome)
+        then:
+        tags.contains(TestTag.withName("Earning Points/Points from special offers").andType("feature"))
+        tags.contains(TestTag.withName("Earning Points").andType("capability"))
+    }
+
+    def "should get all matching requirements set from a test outcome "() {
+        given:
+        TestOutcome outcome = Mock(TestOutcome)
+        outcome.issueKeys >> ["DEMO-8"]
+        when:
+        List<Requirement> requirements = requirementsProvider.getAssociatedRequirements(outcome)
+        then:
+        requirements.collect { it.name }.containsAll(["Grow normal potatoes", "Grow Potatoes"])
     }
 
     def "associated tags should include all requirements"() {
@@ -73,7 +95,7 @@ class WhenReadingCustomFieldRequirementsFromJIRA extends Specification {
         when:
             def tags = requirementsProvider.getTagsFor(outcome)
         then:
-            tags.collect { it.name }.containsAll(["Grow normal potatoes", "Grow Potatoes"])
+            tags.collect { it.name }.containsAll(["Grow Potatoes/Grow normal potatoes", "Grow Potatoes"])
     }
 
     def "should get corresponding requirements from a test tag "() {
