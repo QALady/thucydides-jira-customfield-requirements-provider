@@ -125,8 +125,7 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
     public List<Release> getReleases() {
         logger.info("Loading releases from JIRA custom fields");
         if (releases == null) {
-            List<CascadingSelectOption> releaseOptions = Lists.newArrayList();
-            releaseOptions = jiraClient.findOptionsForCascadingSelect(releaseField);
+            List<CascadingSelectOption> releaseOptions = jiraClient.findOptionsForCascadingSelect(releaseField);
             releases = new ReleaseConverter().convertToReleases(releaseOptions);
         }
         logger.info("Releases: " + releases);

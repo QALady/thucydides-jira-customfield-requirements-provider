@@ -4,11 +4,11 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.9.260</version>
+        <version>0.9.268</version>
     </parent>
     <groupId>net.thucydides.plugins.jira</groupId>
     <artifactId>thucydides-jira-customfields-requirements-provider</artifactId>
-    <version>0.9.261-SNAPSHOT</version>
+    <version>0.9.268-SNAPSHOT</version>
     <name>thucydides-jira-customfields-requirements-provider</name>
     <packaging>jar</packaging>
 
@@ -16,8 +16,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <thucydides.version>0.9.260</thucydides.version>
-        <thucydides.jira.version>0.9.260</thucydides.jira.version>
+        <thucydides.version>0.9.268</thucydides.version>
+        <thucydides.jira.version>0.9.268</thucydides.jira.version>
     </properties>
 
     <scm>
@@ -31,11 +31,6 @@
         <dependency>
             <groupId>net.thucydides</groupId>
             <artifactId>thucydides-core</artifactId>
-            <version>${thucydides.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.thucydides</groupId>
-            <artifactId>thucydides-junit</artifactId>
             <version>${thucydides.version}</version>
         </dependency>
         <dependency>
